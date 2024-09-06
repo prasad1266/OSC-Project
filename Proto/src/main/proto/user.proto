@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package user;
+option java_multiple_files = true;
+option java_package = "com.user";
+
+service UserDataService {
+
+  // Registers a new user with provided data (name, email, etc.)
+  rpc registerUser(RegisterUserRequest) returns (RegisterUserResponse);
+
+  // Verifies the email uniqueness
+  rpc verifyEmailAddressIsUnique(UniqueEmailRequest) returns (UniqueEmailResponse);
+
+  // Update password --- > forgot password
+  rpc resetPassword(ResetPasswordRequest) returns (ResetPasswordResponse);
+
+
+}
+
+message RegisterUserRequest {
+  string userId= 6;
+  string name = 1;
+  string email = 2;
+  string mobileNumber = 3;
+  string dob = 4;
+  string password = 5;
+}
+
+message RegisterUserResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message UniqueEmailRequest {
+  string email = 1;
+}
+
+message UniqueEmailResponse {
+  bool isUnique = 1;
+}
+
+
+message ResetPasswordRequest {
+  string password = 1;
+  string email = 2;
+}
+
+message ResetPasswordResponse {
+  string message = 1;
+}

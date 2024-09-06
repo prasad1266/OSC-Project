@@ -1,0 +1,11 @@
+{
+  "type": "record",
+  "name": "SessionAvro",
+  "namespace": "com.osc.sessiondataservice.avro",
+  "fields": [
+    {
+      "name": "SessionStatus",
+      "type": "boolean"
+    }
+  ]
+}

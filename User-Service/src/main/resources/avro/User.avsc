@@ -1,0 +1,24 @@
+{
+  "type": "record",
+  "name": "User",
+  "namespace": "avro",
+  "fields": [
+    {
+      "name": "email",
+      "type": "string"
+    },
+    {
+      "name": "contactNo",
+      "type": "string"
+    },
+    {
+      "name": "dob",
+      "type": "string",
+      "doc": "Date of Birth in YYYY-MM-DD format"
+    },
+    {
+      "name": "name",
+      "type": "string"
+    }
+  ]
+}

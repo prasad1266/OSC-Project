@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package session;
+
+option java_multiple_files = true;
+option java_package = "com.session";
+
+service SessionService {
+  rpc VerifyCredentials (VerifyCredentialsRequest) returns (VerifyCredentialsResponse);
+  rpc CheckSessionStatus (SessionStatusRequest) returns (SessionStatusResponse);
+  rpc CreateSession (CreateSessionRequest) returns (CreateSessionResponse);
+  rpc SessionLogout(LogoutRequest) returns (LogoutResponse);
+}
+
+  message LogoutRequest{
+    string userId = 1;
+    string sessionId = 2;
+  }
+
+  message LogoutResponse{
+    bool isSessionLogout = 1;
+  }
+
+  message VerifyCredentialsRequest {
+    string userId = 1;
+  }
+
+  message VerifyCredentialsResponse {
+    string name = 1;
+    string password = 2;
+  }
+
+  message SessionStatusRequest {
+    string userId = 1;
+    string deviceId = 2;
+  }
+
+  message SessionStatusResponse {
+    bool status = 1;
+  }
+
+  message CreateSessionRequest {
+    string userId = 1;
+    string deviceId = 2;
+    string sessionId = 3;
+  }
+
+  message CreateSessionResponse {
+    bool status = 1;
+  }
