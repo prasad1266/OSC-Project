@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class LoginUserServiceImpl implements LoginUserService {
@@ -50,7 +51,6 @@ public class LoginUserServiceImpl implements LoginUserService {
             CreateSessionRequest createSessionRequest = SessionMapper.maptoCreateSessionRequest(logindto, sessionId);
             stub.createSession(createSessionRequest);
         }
-        List<String> responseData = Arrays.asList(sessionId, userName);
-        return new Response(responseData, 200);
+        return new Response(Map.of("sessionId",sessionId,"name",userName), 200);
     }
 }

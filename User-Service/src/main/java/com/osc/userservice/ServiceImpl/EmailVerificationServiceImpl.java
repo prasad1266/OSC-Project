@@ -28,7 +28,6 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     @Override
     public Response isEmailExist(String email){
         boolean isUnique = verifyUniqueEmailService.verifyUniqueEmail(email);
-
         if(!isUnique) { throw new EmailNotFoundException();}
         else{
             String otp = OTPGenerator.generateOTP();

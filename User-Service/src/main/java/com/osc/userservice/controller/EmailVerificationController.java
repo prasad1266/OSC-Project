@@ -5,7 +5,7 @@ import com.osc.userservice.service.EmailVerificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin("*")
 @RestController
 public class EmailVerificationController {
 
@@ -15,8 +15,8 @@ public class EmailVerificationController {
         this.emailVerificationService = emailVerificationService;
     }
 
-    @PostMapping("/users/forgotpassword")
-    public ResponseEntity<Response> EmailVerification(@RequestParam String email){
+    @PostMapping("/user/forgotpassword")
+    public ResponseEntity<Response> EmailVerification(@RequestBody String email){
 
         Response response = emailVerificationService.isEmailExist(email);
         return ResponseEntity.ok(response);

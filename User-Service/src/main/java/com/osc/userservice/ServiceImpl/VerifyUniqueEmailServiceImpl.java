@@ -21,10 +21,9 @@ public class VerifyUniqueEmailServiceImpl implements verifyUniqueEmailService {
     public boolean verifyUniqueEmail(String email){
         UniqueEmailRequest uniqueEmailRequest = UserMapper.toUniqueEmailRequest(email);
         UniqueEmailResponse uniqueEmailResponse = stub.verifyEmailAddressIsUnique(uniqueEmailRequest);
-
        boolean isUnique = uniqueEmailResponse.getIsUnique();
+        System.out.println(" Email is Unique  :"+isUnique);
        //if(!isUnique)  throw new EmailAlreadyExistException
        return isUnique;
     }
-
 }

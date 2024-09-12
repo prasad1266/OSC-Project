@@ -1,6 +1,7 @@
 package com.osc.userservice.ServiceImpl;
 
 import com.osc.userservice.constatnts.StatusCodes;
+import com.osc.userservice.dto.RegisterResponsedto;
 import com.osc.userservice.dto.UserDto;
 import com.osc.userservice.exception.EmailAlreadyExistException;
 import com.osc.userservice.kafka.KafkaManagerService;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.osc.userservice.service.verifyUniqueEmailService;
 
 import java.security.SecureRandom;
+import java.util.Map;
 
 @Service
 public class UserRegisterServiceImpl implements UserRegisterService {
@@ -49,7 +51,7 @@ public class UserRegisterServiceImpl implements UserRegisterService {
             logger.info("Produce into OTPTopic while Registering {}",userId);
             kafkaManagerService.produceOTPTopicForRegistration(userDTO.getEmail(),otp,userId);
 
-            return new Response(userId, StatusCodes.REGISTRATION_SUCCESS);
+            return new Response(Map.of("userId",userId), StatusCodes.REGISTRATION_SUCCESS);
         }
         throw new EmailAlreadyExistException();
     }

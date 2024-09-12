@@ -73,7 +73,7 @@ private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPatt
                 .setDob(user.getDob().toString())
                 .setPassword(passwordDto.getPassword())
                 .build();
-    }
+    } 
 
     public static ResetPasswordRequest toResetPasswordRequest(UpdatePasswordDto updatePasswordDto) {
         return ResetPasswordRequest.newBuilder()

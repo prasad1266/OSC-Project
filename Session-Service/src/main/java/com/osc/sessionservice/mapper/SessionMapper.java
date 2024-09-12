@@ -6,7 +6,6 @@ import com.osc.sessionservice.dto.Logindto;
 import com.osc.sessionservice.dto.Logoutdto;
 import com.osc.sessionservice.dto.VerifyCredentialsResponseDto;
 import com.session.*;
-import com.user.RegisterUserResponse;
 
 import java.time.format.DateTimeFormatter;
 
@@ -29,7 +28,7 @@ private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPatt
     public static CreateSessionRequest maptoCreateSessionRequest(Logindto logindto,String sessionId){
         return CreateSessionRequest.newBuilder()
                 .setUserId(logindto.getUserId())
-                .setDeviceId(logindto.getDeviceName())
+                .setDeviceId(logindto.getLoginDevice())
                 .setSessionId(sessionId)
                 .build();
     }
@@ -39,7 +38,7 @@ private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPatt
     public static SessionStatusRequest maptoSessionStatusRequest(Logindto logindto) {
        return SessionStatusRequest.newBuilder()
                 .setUserId(logindto.getUserId())
-                .setDeviceId(logindto.getDeviceName()).build();
+                .setDeviceId(logindto.getLoginDevice()).build();
     }
 
     public static LogoutRequest mapToLogoutRequest(Logoutdto logoutdto) {

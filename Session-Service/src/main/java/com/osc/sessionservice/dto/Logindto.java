@@ -7,5 +7,5 @@ public class Logindto {
 
     private String userId;
     private String password;
-    private String deviceName;
+    private String loginDevice;
 }

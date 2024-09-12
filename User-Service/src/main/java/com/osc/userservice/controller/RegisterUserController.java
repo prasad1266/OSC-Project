@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin("*")
 @RestController
 public class RegisterUserController {
 
@@ -27,7 +27,7 @@ private UserRegisterService userRegisterService;
         logger.info("Received signup request for user: {}");
 
         Response response = userRegisterService.registerUser(userDto);
-        logger.info("User registration successful for email: {}");
+        logger.info("User registration successful : {}",response);
         return ResponseEntity.ok(response);
     }
 }

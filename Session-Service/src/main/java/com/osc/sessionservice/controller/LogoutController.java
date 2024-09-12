@@ -4,7 +4,7 @@ import com.osc.sessionservice.dto.Logoutdto;
 import com.osc.sessionservice.response.Response;
 import com.osc.sessionservice.service.LogoutSevice;
 import org.springframework.web.bind.annotation.*;
-
+@CrossOrigin("*")
 @RestController
 public class LogoutController {
 
