@@ -75,12 +75,14 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<!-- Include proto-files dependency -->
 		<dependency>
 			<groupId>com.ptoto</groupId>
 			<artifactId>Proto</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+
 		<!-- Exclude Logback from all starters -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

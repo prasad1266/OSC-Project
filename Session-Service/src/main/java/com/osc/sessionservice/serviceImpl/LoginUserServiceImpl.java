@@ -39,6 +39,7 @@ public class LoginUserServiceImpl implements LoginUserService {
 
         String userName = verifyCredentialsResponseDto.getName();
         boolean response = CredentialVerfication.verifyCredentials(logindto, verifyCredentialsResponseDto);
+        System.out.println("Verify Credentials  Response : ");
         String sessionId = null;
         if (response) {
             SessionStatusRequest sessionStatusRequest = SessionMapper.maptoSessionStatusRequest(logindto);
