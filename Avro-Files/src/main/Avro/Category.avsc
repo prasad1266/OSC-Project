@@ -1,0 +1,15 @@
+{
+  "type": "record",
+  "name": "Category",
+  "namespace": "com.osc.avro.files",
+  "fields": [
+    {
+      "name": "categoryName",
+      "type": "string"
+    },
+    {
+      "name": "imagePath",
+      "type": "string"
+    }
+  ]
+}

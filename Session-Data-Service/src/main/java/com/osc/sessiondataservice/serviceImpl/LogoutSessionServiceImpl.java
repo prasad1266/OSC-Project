@@ -1,6 +1,7 @@
 package com.osc.sessiondataservice.serviceImpl;
 
 import com.osc.sessiondataservice.avro.SessionAvro;
+import com.osc.sessiondataservice.avro.SessionKey;
 import com.osc.sessiondataservice.constants.Constants;
 import com.osc.sessiondataservice.dto.LogoutRequestDto;
 import com.osc.sessiondataservice.entity.Session;
@@ -47,12 +48,13 @@ public class LogoutSessionServiceImpl implements LogoutUserService {
 
             sessionRepository.save(byUserIdAndSessionId);
 
-            String compositKey = ConcatUserIdAndDeviceName.concatUserIdAndDeviceName(logoutRequestDto.getUserId(),deviceName);
-            SessionAvro sessionAvro =kafkaManagerService.getSession(compositKey);
+//            String compositKey = ConcatUserIdAndDeviceName.concatUserIdAndDeviceName(logoutRequestDto.getUserId(),deviceName);
+            SessionKey sessionKey  = SessionKey.newBuilder().setDeviceId(deviceName).setUserId(logoutRequestDto.getUserId()).build();
+            SessionAvro sessionAvro =kafkaManagerService.getSession(sessionKey);
             System.out.println("Session Avro : "+sessionAvro);
 
             //Logout User produce status False
-            kafkaManagerService.logoutSession(compositKey);
+            kafkaManagerService.logoutSession(sessionKey);
         }
         return LogoutResponse.newBuilder()
                 .setIsSessionLogout(true).build();

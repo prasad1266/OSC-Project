@@ -31,7 +31,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         if(!isUnique) { throw new EmailNotFoundException();}
         else{
             String otp = OTPGenerator.generateOTP();
-            // Produce OTP to "Prasad-otp-topic"
+
             logger.info("produceOTPForForgotPassword Into Otp Topic");
             kafkaManagerService.produceOTPForForgotPassword(otp,email);
         }

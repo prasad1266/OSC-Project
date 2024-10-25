@@ -1,14 +1,13 @@
 package com.osc.sessiondataservice.config;
 
 import com.osc.sessiondataservice.avro.SessionAvro;
+import com.osc.sessiondataservice.avro.SessionKey;
 import com.osc.sessiondataservice.constants.Constants;
 import com.osc.sessiondataservice.kafka.AppSerdes;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StoreQueryParameters;
@@ -16,7 +15,6 @@ import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.GlobalKTable;
-import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
@@ -35,24 +33,58 @@ import java.util.Properties;
 @Configuration
 public class KafkaConfigurations {
     @Bean(name = "session-producer")
-    public ProducerFactory<String, Object> producerFactory() {
+    public ProducerFactory<SessionKey, SessionAvro> producerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, Constants.bootstrapServers);
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
         props.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, Constants.SCHEMA_REGISTRY_URL);
         return new DefaultKafkaProducerFactory<>(props);
     }
 
     @Bean(name = "KafkaTemplate")
-    public KafkaTemplate<String, Object> kafkaTemplate() {
+    public KafkaTemplate<SessionKey, SessionAvro> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
-    @Bean(name = "session-topic")
-    public NewTopic createSessionTopic() {
-        return new NewTopic(Constants.SESSION_Topic, 12, (short) 1);
-    }
+//    @Bean(name = "users-topic")
+//    public NewTopic createUserTopic() {
+//        return new NewTopic(Constants.User_Topic, 12, (short) 1);
+//    }
+//
+//    @Bean(name = "otp-topic")
+//    public NewTopic createOTPTopic() {
+//        return new NewTopic(Constants.OTP_Topic, 12, (short) 1);
+//    }
+
+//    @Bean(name = "Recent-Viewd-products-topic")
+//    public NewTopic createRecentViewdProductsTopic() {
+//        return new NewTopic("Prasad-recently_view_product-topic", 12, (short) 1);
+//    }
+//@Bean(name = "Cart-products-topic")
+//public NewTopic createCartProductsTopic() {
+//    return new NewTopic("Prasad-Cart-product-topic", 12, (short) 1);
+//}
+//
+//    @Bean(name = "session-topic")
+//    public NewTopic createSessionTopic() {
+//        return new NewTopic(Constants.SESSION_Topic, 12, (short) 1);
+//    }
+//
+//    @Bean(name = "Product-topic")
+//    public NewTopic createProductTopic() {
+//        return new NewTopic("Prasad-Products-topic", 12, (short) 1);
+//    }
+//
+//    @Bean(name = "Category-topic")
+//    public NewTopic createCategoryTopic() {
+//        return new NewTopic("Prasad-Category-topic", 12, (short) 1);
+//    }
+//
+//    @Bean(name = "product-count-topic")
+//    public NewTopic createProductCountTopic() {
+//        return new NewTopic("Prasad-product-Count-topic", 12, (short) 1);
+//    }
 
 
     @Bean
@@ -86,18 +118,18 @@ public class KafkaConfigurations {
     }
 
     @Bean(name = "session-KTable")
-    public GlobalKTable<String, SessionAvro> sessionKtable(@Qualifier("streams-builder") StreamsBuilder streamsBuilder) {
+    public GlobalKTable<SessionKey, SessionAvro> sessionKtable(@Qualifier("streams-builder") StreamsBuilder streamsBuilder) {
         return streamsBuilder.globalTable(
                 Constants.SESSION_Topic,
-                Consumed.with(Serdes.String(), AppSerdes.SessionSerde()),
-                Materialized.<String, SessionAvro, KeyValueStore<Bytes, byte[]>>as(Constants.SESSION_STORE)
-                        .withKeySerde(Serdes.String())
+                Consumed.with(AppSerdes.SessionKeySerde(), AppSerdes.SessionSerde()),
+                Materialized.<SessionKey, SessionAvro, KeyValueStore<Bytes, byte[]>>as(Constants.SESSION_STORE)
+                        .withKeySerde(AppSerdes.SessionKeySerde())
                         .withValueSerde(AppSerdes.SessionSerde())
         );
     }
 
     @Bean(name = "sessionStore")
-    public ReadOnlyKeyValueStore<String, SessionAvro> sessionStore(
+    public ReadOnlyKeyValueStore<SessionKey, SessionAvro> sessionStore(
             @Qualifier("session-streams") KafkaStreams kafkaStreams) throws InterruptedException {
 
         // Wait for the KafkaStreams to be ready

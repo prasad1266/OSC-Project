@@ -1,0 +1,31 @@
+{
+  "type": "record",
+  "name": "Product",
+  "namespace": "com.osc.avro.files",
+  "fields": [
+    {
+      "name": "categoryId",
+      "type": "string"
+    },
+    {
+      "name": "productName",
+      "type": "string"
+    },
+    {
+      "name": "productPrice",
+      "type": "double"
+    },
+    {
+      "name": "productDescription",
+      "type": "string"
+    },
+    {
+      "name": "imagePath",
+      "type": "string"
+    },
+    {
+      "name": "addedDateTime",
+      "type": "long"
+    }
+  ]
+}

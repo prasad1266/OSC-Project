@@ -93,8 +93,6 @@
 			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
 
-
-
 		<!--Kafka dependency-->
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
@@ -141,7 +139,7 @@
 						</goals>
 						<configuration>
 							<sourceDirectory>
-								${project.basedir}/src/main/resources/avro-schema/
+								${project.basedir}/src/main/resources/avro/
 							</sourceDirectory>
 							<outputDirectory>
 								${project.basedir}/src/main/java/

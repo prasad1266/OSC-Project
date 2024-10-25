@@ -38,7 +38,7 @@ public class UserRegisterServiceImpl implements UserRegisterService {
         //Unique Email Verification
         boolean isUnique = verifyUniqueEmailService.verifyUniqueEmail(email);
         if (!isUnique) {
-            logger.info(" Unique Email : {}",userDTO.getEmail());
+            logger.info("Unique Email : {}",userDTO.getEmail());
             //Create Username And Otp
             String userId = generateUsername(userDTO.getName());
             String otp = OTPGenerator.generateOTP();

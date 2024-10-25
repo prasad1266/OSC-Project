@@ -10,10 +10,13 @@ import com.user.UniqueEmailResponse;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Mapper {
+
     // Convert RegisterUserRequest to User entity
     public static User mapToUser(RegisterUserRequest request) {
+
         User user = new User();
         user.setUserId(request.getUserId());
         user.setName(request.getName());

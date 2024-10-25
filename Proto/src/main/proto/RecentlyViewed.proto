@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option java_multiple_files = true;
+option java_package = "com.recentHistory";
+option java_outer_classname = "RecentlyViewedProto";
+
+message RecentlyViewedRequest {
+  string userId = 1;
+}
+
+message RecentlyViewedResponse {
+  repeated string productId = 1;
+}
+
+message UpdateRecentViewedRequest {
+  string userId = 1;
+  string productId = 2;
+}
+
+service RecentlyViewedService {
+  rpc fetchRecentlyViewedHistory (RecentlyViewedRequest) returns (RecentlyViewedResponse);
+  rpc updateRecentlyViewedProducts(UpdateRecentViewedRequest) returns (google.protobuf.Empty);
+  rpc updateViewHistoryInDatabase(RecentlyViewedRequest) returns (google.protobuf.Empty);
+}

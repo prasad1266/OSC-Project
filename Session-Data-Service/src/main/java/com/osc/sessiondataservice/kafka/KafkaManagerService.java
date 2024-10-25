@@ -2,6 +2,7 @@ package com.osc.sessiondataservice.kafka;
 
 
 import com.osc.sessiondataservice.avro.SessionAvro;
+import com.osc.sessiondataservice.avro.SessionKey;
 import com.osc.sessiondataservice.constants.Constants;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,35 +12,32 @@ import org.springframework.stereotype.Component;
 @Component
 public class KafkaManagerService {
 
-    private ReadOnlyKeyValueStore<String, SessionAvro> sessionStore;
+    private ReadOnlyKeyValueStore<SessionKey, SessionAvro> sessionStore;
 
-    private KafkaTemplate<String, Object> kafkaTemplate;
+    private KafkaTemplate<SessionKey, SessionAvro> kafkaTemplate;
 
-    public KafkaManagerService(@Qualifier("sessionStore") ReadOnlyKeyValueStore<String,SessionAvro > sessionStore,
-                               @Qualifier("KafkaTemplate")KafkaTemplate<String, Object> kafkaTemplate) {
+    public KafkaManagerService(@Qualifier("sessionStore") ReadOnlyKeyValueStore<SessionKey,SessionAvro > sessionStore,
+                               @Qualifier("KafkaTemplate")KafkaTemplate<SessionKey, SessionAvro> kafkaTemplate) {
         this.sessionStore = sessionStore;
         this.kafkaTemplate = kafkaTemplate;
     }
 
-
-
-
-    public void newUserSession(String sessionId) {
+    public void newUserSession(SessionKey sessionKey) {
         SessionAvro updateSessionAvro = SessionAvro.newBuilder().setSessionStatus(false).build();
-        kafkaTemplate.send(Constants.SESSION_Topic,sessionId,updateSessionAvro);
+        kafkaTemplate.send(Constants.SESSION_Topic,sessionKey,updateSessionAvro);
     }
 
-    public void logoutSession(String sessionId) {
+    public void logoutSession(SessionKey sessionKey) {
         SessionAvro updateSessionAvro = SessionAvro.newBuilder().setSessionStatus(false).build();
-        kafkaTemplate.send(Constants.SESSION_Topic,sessionId,updateSessionAvro);
+        kafkaTemplate.send(Constants.SESSION_Topic,sessionKey,updateSessionAvro);
     }
-    public SessionAvro getSession(String Key){
+
+    public SessionAvro getSession(SessionKey Key){
             return sessionStore.get(Key);
     }
 
-
-    public void createSession(String sessionId) {
+    public void createSession(SessionKey sessionKey) {
         SessionAvro updateSessionAvro = SessionAvro.newBuilder().setSessionStatus(true).build();
-        kafkaTemplate.send(Constants.SESSION_Topic,sessionId,updateSessionAvro);
+        kafkaTemplate.send(Constants.SESSION_Topic,sessionKey,updateSessionAvro);
     }
 }

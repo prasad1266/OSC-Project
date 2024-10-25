@@ -1,0 +1,15 @@
+{
+  "type": "record",
+  "name": "ProductViewCount",
+  "namespace": "com.osc.avro.files",
+  "fields": [
+    {
+      "name": "categoryId",
+      "type": "string"
+    },
+    {
+      "name": "viewCount",
+      "type": "int"
+    }
+  ]
+}

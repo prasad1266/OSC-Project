@@ -1,57 +1,71 @@
 package com.osc.sessionservice.serviceImpl;
 
 import com.osc.sessionservice.dto.Logindto;
-import com.osc.sessionservice.dto.VerifyCredentialsResponseDto;
 import com.osc.sessionservice.exception.ActiveSessionException;
 import com.osc.sessionservice.mapper.SessionMapper;
 import com.osc.sessionservice.response.Response;
 import com.osc.sessionservice.service.LoginUserService;
-import com.osc.sessionservice.service.VerifyUserCredentialsService;
 import com.osc.sessionservice.utility.CredentialVerfication;
 import com.osc.sessionservice.utility.SessionIdGenerator;
-import com.session.CreateSessionRequest;
-import com.session.SessionServiceGrpc;
-import com.session.SessionStatusRequest;
-import com.session.SessionStatusResponse;
+import com.session.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 @Service
 public class LoginUserServiceImpl implements LoginUserService {
 
-    private VerifyUserCredentialsService verifyUserCredentialsService;
-    private SessionServiceGrpc.SessionServiceBlockingStub stub;
+    private SessionMapper sessionMapper;
+    private SessionServiceGrpc.SessionServiceBlockingStub sessionServiceBlockingStub;
+    private  SessionServiceGrpc.SessionServiceBlockingStub stubofUser;
 
-    public LoginUserServiceImpl(@Qualifier("sessionServiceBlockingStub")SessionServiceGrpc.SessionServiceBlockingStub stub,
-                                VerifyUserCredentialsService verifyUserCredentialsService) {
-        this.stub = stub;
-        this.verifyUserCredentialsService = verifyUserCredentialsService;
+
+    private static final Logger logger = LogManager.getLogger(LoginUserServiceImpl.class);
+
+    public LoginUserServiceImpl(SessionMapper sessionMapper,
+                                @Qualifier("sessionServiceBlockingStub")SessionServiceGrpc.SessionServiceBlockingStub sessionServiceBlockingStub,
+                                @Qualifier("userServiceBlockingStub") SessionServiceGrpc.SessionServiceBlockingStub stubofUser) {
+
+      this.stubofUser = stubofUser;
+      this.sessionMapper = sessionMapper;
+        this.sessionServiceBlockingStub = sessionServiceBlockingStub;
     }
 
     @Override
     public Response loginUser(Logindto logindto) {
+        logger.info("fetchUserCredentials From DataBase");
+        VerifyCredentialsResponse verifyCredentialsResponse = fetchUserCredentials(logindto);
 
-        VerifyCredentialsResponseDto verifyCredentialsResponseDto = verifyUserCredentialsService.fetchUserCredentials(logindto);
+        String userName = verifyCredentialsResponse.getName();
+        boolean response = CredentialVerfication.verifyCredentials(logindto, verifyCredentialsResponse);
 
-        String userName = verifyCredentialsResponseDto.getName();
-        boolean response = CredentialVerfication.verifyCredentials(logindto, verifyCredentialsResponseDto);
-        System.out.println("Verify Credentials  Response : ");
         String sessionId = null;
         if (response) {
-            SessionStatusRequest sessionStatusRequest = SessionMapper.maptoSessionStatusRequest(logindto);
-            SessionStatusResponse response1 = stub.checkSessionStatus(sessionStatusRequest);
+            logger.info("CredentialVerfication Successfull !!!");
+            SessionStatusRequest sessionStatusRequest = sessionMapper.maptoSessionStatusRequest(logindto);
+            SessionStatusResponse response1 = sessionServiceBlockingStub.checkSessionStatus(sessionStatusRequest);
 
-            if (response1.getStatus()) {                                          // sessionStatus = true
+            if (response1.getStatus()) {
+                logger.info("Session For User AlreadyExist");
                 throw new ActiveSessionException();
             }
             sessionId = SessionIdGenerator.generateSessionId();
-            CreateSessionRequest createSessionRequest = SessionMapper.maptoCreateSessionRequest(logindto, sessionId);
-            stub.createSession(createSessionRequest);
+            CreateSessionRequest createSessionRequest = sessionMapper.maptoCreateSessionRequest(logindto, sessionId);
+            logger.info("Create Session Request To Server");
+            sessionServiceBlockingStub.createSession(createSessionRequest);
         }
-        return new Response(Map.of("sessionId",sessionId,"name",userName), 200);
+        return new Response(Map.of("sessionId", sessionId, "name", userName), 200);
+    }
+
+
+    public VerifyCredentialsResponse fetchUserCredentials(Logindto logindto) {
+
+        VerifyCredentialsRequest verifyCredentialsRequest = sessionMapper.maptoVerifyCredentialsRequest(logindto);
+        VerifyCredentialsResponse verifyCredentialsResponse = stubofUser.verifyCredentials(verifyCredentialsRequest);
+        return verifyCredentialsResponse;
+
     }
 }

@@ -17,7 +17,6 @@ public class SessionDataGrpcService extends SessionServiceGrpc.SessionServiceImp
 
     @Override
     public void verifyCredentials(VerifyCredentialsRequest request, StreamObserver<VerifyCredentialsResponse> responseObserver) {
-
         VerifyCredentialsResponse verifyCredentialsResponse = verifyUserCredentialsService.verifyCredentialsFromDB(request);
         responseObserver.onNext(verifyCredentialsResponse);
         responseObserver.onCompleted();

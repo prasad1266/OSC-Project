@@ -1,6 +1,7 @@
 package com.osc.sessiondataservice.serviceImpl;
 
 import com.osc.sessiondataservice.avro.SessionAvro;
+import com.osc.sessiondataservice.avro.SessionKey;
 import com.osc.sessiondataservice.constants.Constants;
 import com.osc.sessiondataservice.dto.CheckStatusDto;
 import com.osc.sessiondataservice.dto.LogoutRequestDto;
@@ -24,8 +25,7 @@ public class CheckSessionStatusServiceImpl implements CheckSessionStatusService 
     private KafkaManagerService kafkaManagerService;
  private SessionStatusResponse sessionStatusResponse;
 
-    public CheckSessionStatusServiceImpl(KafkaManagerService kafkaManagerService
-                                        ) {
+    public CheckSessionStatusServiceImpl(KafkaManagerService kafkaManagerService) {
         this.kafkaManagerService = kafkaManagerService;
     }
 
@@ -35,11 +35,12 @@ public class CheckSessionStatusServiceImpl implements CheckSessionStatusService 
 
         CheckStatusDto dto = SessionMapper.toCheckStatusDto(sessionStatusRequest);
         String sessionId = ConcatUserIdAndDeviceName.concatUserIdAndDeviceName(dto.getUserId(), dto.getDeviceName());
-        SessionAvro sessionAvro = kafkaManagerService.getSession(sessionId);
+        SessionKey sessionKey  = SessionKey.newBuilder().setDeviceId(dto.getDeviceName()).setUserId(dto.getUserId()).build();
+        SessionAvro sessionAvro = kafkaManagerService.getSession(sessionKey);
 
         if (sessionAvro == null){
             //Produce new User With False Status
-            kafkaManagerService.newUserSession(sessionId);
+            kafkaManagerService.newUserSession(sessionKey);
         }else{
         sessionStatusResponse = SessionMapper.mapToSessionStatusResponse(sessionAvro.getSessionStatus());
         return sessionStatusResponse;

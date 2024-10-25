@@ -2,30 +2,33 @@ package com.osc.sessionservice.mapper;
 
 
 
+import com.cart.ProductQuantityRequest;
 import com.osc.sessionservice.dto.Logindto;
 import com.osc.sessionservice.dto.Logoutdto;
 import com.osc.sessionservice.dto.VerifyCredentialsResponseDto;
+import com.recentHistory.RecentlyViewedRequest;
 import com.session.*;
+import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
-
+@Component
 public class SessionMapper {
 
 private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public static VerifyCredentialsRequest maptoVerifyCredentialsRequest(Logindto logindto){
+    public VerifyCredentialsRequest maptoVerifyCredentialsRequest(Logindto logindto){
                 return VerifyCredentialsRequest.newBuilder()
                         .setUserId(logindto.getUserId())
                         .build();
         }
-    public static VerifyCredentialsResponseDto maptoVerifyCredentialsResponseDto(VerifyCredentialsResponse verifyCredentialsResponse){
+    public VerifyCredentialsResponseDto maptoVerifyCredentialsResponseDto(VerifyCredentialsResponse verifyCredentialsResponse){
         VerifyCredentialsResponseDto dto = new VerifyCredentialsResponseDto();
         dto.setName(verifyCredentialsResponse.getName());
         dto.setPassword(verifyCredentialsResponse.getPassword());
         return dto;
     }
 
-    public static CreateSessionRequest maptoCreateSessionRequest(Logindto logindto,String sessionId){
+    public CreateSessionRequest maptoCreateSessionRequest(Logindto logindto,String sessionId){
         return CreateSessionRequest.newBuilder()
                 .setUserId(logindto.getUserId())
                 .setDeviceId(logindto.getLoginDevice())
@@ -33,18 +36,24 @@ private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPatt
                 .build();
     }
 
-
-
-    public static SessionStatusRequest maptoSessionStatusRequest(Logindto logindto) {
+    public SessionStatusRequest maptoSessionStatusRequest(Logindto logindto) {
        return SessionStatusRequest.newBuilder()
                 .setUserId(logindto.getUserId())
                 .setDeviceId(logindto.getLoginDevice()).build();
     }
 
-    public static LogoutRequest mapToLogoutRequest(Logoutdto logoutdto) {
+    public LogoutRequest mapToLogoutRequest(Logoutdto logoutdto) {
         return LogoutRequest.newBuilder()
                 .setSessionId(logoutdto.getSessionId())
                 .setUserId(logoutdto.getUserId()).build();
+    }
+
+    public RecentlyViewedRequest mapToRecentlyViewedRequest(Logoutdto logoutdto) {
+        return RecentlyViewedRequest.newBuilder().setUserId(logoutdto.getUserId()).build();
+    }
+
+    public ProductQuantityRequest mapToProductQuantityRequest(Logoutdto logoutdto) {
+        return ProductQuantityRequest.newBuilder().setUserId(logoutdto.getUserId()).build();
     }
 
 

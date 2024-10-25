@@ -1,6 +1,7 @@
 package com.osc.sessiondataservice.serviceImpl;
 
 import com.osc.sessiondataservice.avro.SessionAvro;
+import com.osc.sessiondataservice.avro.SessionKey;
 import com.osc.sessiondataservice.constants.Constants;
 import com.osc.sessiondataservice.dto.CheckStatusDto;
 import com.osc.sessiondataservice.dto.LogoutRequestDto;
@@ -39,9 +40,11 @@ public class CreateSessionServiceImpl implements CreateSessionService {
     public CreateSessionResponse CreateSession(CreateSessionRequest createSessionRequest) {
 
         session = SessionMapper.mapToSession(createSessionRequest);
-        String sessionId =  ConcatUserIdAndDeviceName.concatUserIdAndDeviceName(session.getUserId(),session.getDeviceName());
-     //Session Produce True
-      kafkaManagerService.createSession(sessionId);
+      //  String sessionId =  ConcatUserIdAndDeviceName.concatUserIdAndDeviceName(session.getUserId(),session.getDeviceName());
+        SessionKey sessionKey  = SessionKey.newBuilder().setDeviceId(session.getDeviceName()).setUserId(session.getUserId()).build();
+
+        //Session Produce True
+      kafkaManagerService.createSession(sessionKey);
          sessionRepository.save(session);
         createSessionResponse= CreateSessionResponse.newBuilder().setStatus(true).build();
         return createSessionResponse;
